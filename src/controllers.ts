@@ -9,4 +9,5 @@ const getProductController = new GetProductsController(getProductUseCase)
 const getOrderUseCase = new GetOrdersUseCase()
 const getOrderController = new GetOrdersController(getOrderUseCase)
 
-export { getProductController, getOrderController };
+export { getOrderController, getProductController };
+
