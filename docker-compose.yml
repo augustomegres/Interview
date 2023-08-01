@@ -1,0 +1,17 @@
+services:
+  postgres-interview:
+    image: postgres:latest
+    container_name: postgres-interview
+    networks:
+      - interview
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=doe123
+      - POSTGRES_USER=johndoe
+      - POSTGRES_DB=interview
+
+networks:
+  interview:
+    driver: bridge
+    name: interview
