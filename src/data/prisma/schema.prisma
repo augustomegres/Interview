@@ -14,16 +14,18 @@ model Product {
   id            String          @id @default(uuid())
   platform_id   String          @unique
   name          String?
-  order         Order?          @relation(fields: [orderId], references: [id])
-  orderId       String?
   OrderProducts OrderProducts[]
+}
+
+model ProductFetchHistory {
+  id              String   @id @default(uuid())
+  lastProductDate DateTime @default(now())
 }
 
 model Order {
   id          String          @id @default(uuid())
   platform_id String          @unique
   line_items  OrderProducts[]
-  Product     Product[]
 }
 
 model OrderProducts {
