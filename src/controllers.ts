@@ -7,9 +7,15 @@ import { Shopify202204ProductsApi } from "./domain/repositories/storeApi/shopify
 import { GetOrdersUseCase } from "./domain/useCases/getOrders";
 import { GetProductsUseCase } from "./domain/useCases/getProducts";
 import { SyncProductsUseCase } from "./domain/useCases/syncProducts";
+import { SyncOrdersUseCase } from "./domain/useCases/syncOrders";
+import { Shopify202204OrdersApi } from "./domain/repositories/storeApi/shopify-2022-04/OrdersApi";
+import { PrismaOrdersRepository } from "./domain/repositories/database/prisma/OrdersRepository";
+import { SyncOrdersController } from "./controllers/syncOrders";
 
-const storeApi = new Shopify202204ProductsApi()
+const storeProductsApi = new Shopify202204ProductsApi()
+const storeOrdersApi = new Shopify202204OrdersApi()
 const productsRepository = new PrismaProductsRepository(new PrismaClient())
+const ordersRepository = new PrismaOrdersRepository(new PrismaClient())
 
 const getProductUseCase = new GetProductsUseCase(productsRepository)
 const getProductController = new GetProductsController(getProductUseCase)
@@ -17,8 +23,11 @@ const getProductController = new GetProductsController(getProductUseCase)
 const getOrderUseCase = new GetOrdersUseCase()
 const getOrderController = new GetOrdersController(getOrderUseCase)
 
-const syncProductUseCase = new SyncProductsUseCase(storeApi, productsRepository)
+const syncProductUseCase = new SyncProductsUseCase(storeProductsApi, productsRepository)
 const syncProductController = new SyncProductsController(syncProductUseCase)
 
-export { getOrderController, getProductController, syncProductController };
+const syncOrderUseCase = new SyncOrdersUseCase(storeOrdersApi, ordersRepository)
+const syncOrderController = new SyncOrdersController(syncOrderUseCase)
+
+export { getOrderController, getProductController, syncProductController, syncOrderController };
 

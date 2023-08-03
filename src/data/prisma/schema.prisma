@@ -14,12 +14,12 @@ model Product {
   id            String          @id @default(uuid())
   platform_id   String          @unique
   name          String
-  OrderProducts OrderProducts[]
+  order_products OrderProducts[]
 }
 
 model ProductFetchHistory {
   id              String   @id @default(uuid())
-  lastProductDate DateTime @default(now())
+  last_product_date DateTime @default(now())
 }
 
 model Order {
@@ -28,12 +28,17 @@ model Order {
   line_items  OrderProducts[]
 }
 
+model OrderFetchHistory {
+  id            String   @id @default(uuid())
+  last_order_date DateTime @default(now())
+}
+
 model OrderProducts {
   id String @id @default(uuid())
 
-  orderId   String
-  productId String
+  order_id   String
+  product_id String
 
-  order   Order   @relation(fields: [orderId], references: [id])
-  product Product @relation(fields: [productId], references: [id])
+  order   Order   @relation(fields: [order_id], references: [id])
+  product Product @relation(fields: [product_id], references: [id])
 }

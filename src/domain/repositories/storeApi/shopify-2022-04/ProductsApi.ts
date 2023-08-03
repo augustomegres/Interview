@@ -9,7 +9,7 @@ export class Shopify202204ProductsApi implements IShopProductsApi {
     const url = `${this.apiUrl}/products.json`;
 
     if (startDate) {
-      startDate.setMilliseconds(startDate.getMilliseconds() + 1);
+      startDate.setSeconds(startDate.getSeconds() + 1);
     }
     
     try {

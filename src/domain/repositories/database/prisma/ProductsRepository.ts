@@ -19,13 +19,13 @@ export class PrismaProductsRepository implements IProductsRepository {
 
   async getLastProductDate(): Promise<Date | null> {
     const latestProduct = await this.database.productFetchHistory.findFirst({
-      orderBy: { lastProductDate: "desc" },
+      orderBy: { last_product_date: "desc" },
     });
 
-    return latestProduct ? latestProduct.lastProductDate : null;
+    return latestProduct ? latestProduct.last_product_date : null;
   }
   async addFetchProductHistory(date: Date): Promise<void> {
-    await this.database.productFetchHistory.create({ data: { lastProductDate: date } })
+    await this.database.productFetchHistory.create({ data: { last_product_date: date } })
   }
 
   async createBatchProducts(product: Product[]): Promise<void> {

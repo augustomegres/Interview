@@ -6,6 +6,5 @@ export class Product {
 		this.id = id
 		this.platform_id = String(platform_id)
 		this.name = name
-
 	}
 }
