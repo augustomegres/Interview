@@ -8,14 +8,15 @@ import { GetOrdersUseCase } from "./domain/useCases/getOrders";
 import { GetProductsUseCase } from "./domain/useCases/getProducts";
 import { SyncProductsUseCase } from "./domain/useCases/syncProducts";
 
-const getProductUseCase = new GetProductsUseCase()
+const storeApi = new Shopify202204ProductsApi()
+const productsRepository = new PrismaProductsRepository(new PrismaClient())
+
+const getProductUseCase = new GetProductsUseCase(productsRepository)
 const getProductController = new GetProductsController(getProductUseCase)
 
 const getOrderUseCase = new GetOrdersUseCase()
 const getOrderController = new GetOrdersController(getOrderUseCase)
 
-const storeApi = new Shopify202204ProductsApi()
-const productsRepository = new PrismaProductsRepository(new PrismaClient())
 const syncProductUseCase = new SyncProductsUseCase(storeApi, productsRepository)
 const syncProductController = new SyncProductsController(syncProductUseCase)
 

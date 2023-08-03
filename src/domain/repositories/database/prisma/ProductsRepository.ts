@@ -8,6 +8,14 @@ export class PrismaProductsRepository implements IProductsRepository {
   constructor(prismaClient: PrismaClient) {
     this.database = prismaClient
   }
+  async findAll(): Promise<Product[]> {
+    const productList = await this.database.product.findMany()
+    const productArray: Product[] = []
+    for (const product of productList) {
+      productArray.push(new Product(product))
+    }
+    return productArray
+  }
 
   async getLastProductDate(): Promise<Date | null> {
     const latestProduct = await this.database.productFetchHistory.findFirst({

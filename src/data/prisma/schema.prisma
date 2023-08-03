@@ -13,7 +13,7 @@ datasource db {
 model Product {
   id            String          @id @default(uuid())
   platform_id   String          @unique
-  name          String?
+  name          String
   OrderProducts OrderProducts[]
 }
 
