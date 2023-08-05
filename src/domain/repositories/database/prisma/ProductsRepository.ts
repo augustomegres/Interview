@@ -28,8 +28,8 @@ export class PrismaProductsRepository implements IProductsRepository {
     await this.database.productFetchHistory.create({ data: { last_product_date: date } })
   }
 
-  async createBatchProducts(product: Product[]): Promise<void> {
+  async createBatchProducts(product: Product[]): Promise<number> {
     const newProducts = await this.database.product.createMany({ data: product })
-    console.log(newProducts)
+    return newProducts.count
   }
 }

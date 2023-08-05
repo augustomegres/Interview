@@ -12,21 +12,37 @@ export class SyncOrdersUseCase {
   }
 
   async execute() {
+    const ordersEntityArray: Order[] = []
     const lastFetch = await this.ordersRepository.getLastOrderDate()
 
-    const orders = await this.ordersApi.fetchOrders(lastFetch)
-    if (!orders.length) return []
+    let nextPageToken: string | null = null
+    let lastOrderFetchedDate: Date | null = null
+    let isFinished = false
 
-    const orderEntityArray: Order[] = []
-    for (const order of orders) {
-      const orderEntity = new Order({ id: v4(), platform_id: order.id, line_items: order.line_items })
-      orderEntityArray.push(orderEntity)
+    while (true) {
+      if (isFinished) break
+      const data = await this.ordersApi.fetchOrders({ startDate: lastFetch, nextPageToken });
+      nextPageToken = data.nextPageToken
+      const orders = data.orders
+
+      if (!orders.length)
+        break;
+
+      orders.forEach(order => {
+        const orderEntity = new Order({ id: v4(), platform_id: order.id, line_items: order.line_items })
+        ordersEntityArray.push(orderEntity);
+      });
+
+      if (!data.nextPageToken || data.callLimitExceded) {
+        lastOrderFetchedDate = orders[orders.length - 1]?.created_at
+        isFinished = true
+      }
     }
-    if (!orderEntityArray.length)
-      await this.ordersRepository.createBatchOrders(orderEntityArray)
 
-    await this.ordersRepository.addFetchOrderHistory(orders[orders.length - 1]?.created_at)
+    const orders = await this.ordersRepository.createBatchOrders(ordersEntityArray);
+    if (lastOrderFetchedDate)
+      await this.ordersRepository.addFetchOrderHistory(lastOrderFetchedDate);
 
-    return orderEntityArray
+    return { message: `${orders} orders synced.` }
   }
 }

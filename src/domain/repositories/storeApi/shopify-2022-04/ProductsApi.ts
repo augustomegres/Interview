@@ -4,8 +4,9 @@ import { IShopProductsApi } from "../../../../contracts/apis/ShopProductsApi";
 export class Shopify202204ProductsApi implements IShopProductsApi {
   private apiKey: string = `${process.env.STORE_API_KEY}`;
   private apiUrl: string = `${process.env.STORE_API_URL}`;
+  private apiCallLimit: number = 40;
 
-  async fetchProducts({ startDate, nextPageToken }: { startDate?: Date | null, nextPageToken?: string }): Promise<{ products: any[], nextPageToken: string | null }> {
+  async fetchProducts({ startDate, nextPageToken }: { startDate?: Date | null, nextPageToken?: string }): Promise<{ products: any[], nextPageToken: string | null, callLimitExceded: boolean }> {
     const url = `${this.apiUrl}/products.json`;
 
     if (startDate) {
@@ -24,14 +25,17 @@ export class Shopify202204ProductsApi implements IShopProductsApi {
       }
     });
 
+    const callLimit = this.getCallLimit(response.headers['x-shopify-shop-api-call-limit'])
+
     const products = response.data.products as any[];
     const newNextPageToken = this.extractNextPageToken(response.headers.link)
-    return { products, nextPageToken: newNextPageToken };
+    const callLimitExceded = callLimit >= this.apiCallLimit 
+    return { products, nextPageToken: newNextPageToken, callLimitExceded };
   }
 
   private extractNextPageToken(headerLink: string): string | null {
     const links = headerLink?.split(',');
-    if(!links) return null
+    if (!links) return null
     let nextPageInfoToken = null;
     const pageInfoRegex = /page_info=([^<&>]+)/;
 
@@ -47,5 +51,10 @@ export class Shopify202204ProductsApi implements IShopProductsApi {
     });
 
     return nextPageInfoToken;
+  }
+
+  private getCallLimit(callLimit: string): number {
+    const limit = Number(callLimit.split('/')[0])
+    return limit
   }
 }

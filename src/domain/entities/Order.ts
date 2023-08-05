@@ -1,7 +1,7 @@
 export class Order {
   id: string;
   platform_id: string;
-  line_items: { product_id: string | null; }[]
+  line_items: { product_id: string; }[]
 
   constructor({
     id,
@@ -17,11 +17,11 @@ export class Order {
     this.line_items = this.mapLineItems(line_items)
   }
 
-  private mapLineItems(line_items: { product_id: string | number | null; }[]): { product_id: string | null; }[] {
-    const array: { product_id: string | null; }[] = []
+  private mapLineItems(line_items: { product_id: string | number | null; }[]): { product_id: string }[] {
+    const array: { product_id: string }[] = []
     for (const item of line_items) {
-      if(!item.product_id) continue
-      array.push({ product_id: item.product_id ? String(item.product_id) : null });
+      if (!item.product_id) continue
+      array.push({ product_id: String(item.product_id) });
     }
     return array
   }

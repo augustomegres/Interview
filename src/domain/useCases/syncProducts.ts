@@ -32,16 +32,16 @@ export class SyncProductsUseCase {
         productEntityArray.push(productEntity);
       });
 
-      if (!data.nextPageToken) {
+      if (!data.nextPageToken || data.callLimitExceded) {
         lastProductFetchedDate = products[products.length - 1]?.created_at
         isFinished = true
       }
     }
 
-    await this.productsRepository.createBatchProducts(productEntityArray);
+    const products = await this.productsRepository.createBatchProducts(productEntityArray);
     if (lastProductFetchedDate)
       await this.productsRepository.addFetchProductHistory(lastProductFetchedDate);
 
-    return productEntityArray
+    return { message: `${products} products synced.` }
   }
 }

@@ -4,5 +4,5 @@ export interface IOrderRepository {
   findAll(): Promise<Order[]>
   addFetchOrderHistory(date: Date): Promise<void>
   getLastOrderDate(): Promise<Date | null>
-  createBatchOrders(product: Order[]): Promise<void>
+  createBatchOrders(product: Order[]): Promise<number>
 }
