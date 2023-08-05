@@ -20,7 +20,7 @@ const ordersRepository = new PrismaOrdersRepository(new PrismaClient())
 const getProductUseCase = new GetProductsUseCase(productsRepository)
 const getProductController = new GetProductsController(getProductUseCase)
 
-const getOrderUseCase = new GetOrdersUseCase()
+const getOrderUseCase = new GetOrdersUseCase(ordersRepository)
 const getOrderController = new GetOrdersController(getOrderUseCase)
 
 const syncProductUseCase = new SyncProductsUseCase(storeProductsApi, productsRepository)

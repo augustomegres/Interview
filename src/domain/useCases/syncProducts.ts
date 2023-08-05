@@ -12,20 +12,35 @@ export class SyncProductsUseCase {
   }
 
   async execute() {
-    const lastFetch = await this.productsRepository.getLastProductDate()
-
-    const products = await this.productsApi.fetchProducts(lastFetch)
-    if (!products.length) return []
-
     const productEntityArray: Product[] = []
-    products.map(product => {
-      const productEntity = new Product({ id: v4(), name: product.title, platform_id: product.id })
-      productEntityArray.push(productEntity)
-    })
+    const lastFetch = await this.productsRepository.getLastProductDate();
 
-    await this.productsRepository.createBatchProducts(productEntityArray)
+    let nextPageToken: string | null = null
+    let lastProductFetchedDate: Date | null = null
+    let isFinished = false
+    while (true) {
+      if (isFinished) break
+      const data = await this.productsApi.fetchProducts({ startDate: lastFetch, nextPageToken });
+      nextPageToken = data.nextPageToken
+      const products = data.products
 
-    await this.productsRepository.addFetchProductHistory(products[products.length - 1]?.created_at)
+      if (!products.length)
+        break;
+
+      products.forEach(product => {
+        const productEntity = new Product({ id: v4(), name: product.title, platform_id: product.id });
+        productEntityArray.push(productEntity);
+      });
+
+      if (!data.nextPageToken) {
+        lastProductFetchedDate = products[products.length - 1]?.created_at
+        isFinished = true
+      }
+    }
+
+    await this.productsRepository.createBatchProducts(productEntityArray);
+    if (lastProductFetchedDate)
+      await this.productsRepository.addFetchProductHistory(lastProductFetchedDate);
 
     return productEntityArray
   }

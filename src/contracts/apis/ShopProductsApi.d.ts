@@ -1,3 +1,3 @@
 export interface IShopProductsApi {
-  fetchProducts(startDate?: Date | null): Promise<any[]>
+  fetchProducts({ startDate, nextPageToken }: { startDate?: Date | null, nextPageToken?: string | null }): Promise<{ products: any[], nextPageToken: string | null }>
 }

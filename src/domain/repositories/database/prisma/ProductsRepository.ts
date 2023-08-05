@@ -29,6 +29,7 @@ export class PrismaProductsRepository implements IProductsRepository {
   }
 
   async createBatchProducts(product: Product[]): Promise<void> {
-    await this.database.product.createMany({ data: product })
+    const newProducts = await this.database.product.createMany({ data: product })
+    console.log(newProducts)
   }
 }

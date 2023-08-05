@@ -19,11 +19,6 @@ export class SyncOrdersUseCase {
 
     const orderEntityArray: Order[] = []
     for (const order of orders) {
-      const index = order.line_items.findIndex((lineItem: any) => !lineItem.product_id)
-      if (index !== -1) {
-        console.log(`Order with id ${order.id} skipped because one or more line_items has no product_id`)
-        continue
-      }
       const orderEntity = new Order({ id: v4(), platform_id: order.id, line_items: order.line_items })
       orderEntityArray.push(orderEntity)
     }

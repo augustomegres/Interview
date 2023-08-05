@@ -19,9 +19,10 @@ export class Order {
 
   private mapLineItems(line_items: { product_id: string | number | null; }[]): { product_id: string | null; }[] {
     const array: { product_id: string | null; }[] = []
-    line_items.map(item => {
-      array.push({ product_id: item.product_id ? String(item.product_id) : null })
-    })
+    for (const item of line_items) {
+      if(!item.product_id) continue
+      array.push({ product_id: item.product_id ? String(item.product_id) : null });
+    }
     return array
   }
 }

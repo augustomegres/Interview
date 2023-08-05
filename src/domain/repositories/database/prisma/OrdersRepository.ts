@@ -29,6 +29,7 @@ export class PrismaOrdersRepository implements IOrderRepository {
     return latestOrder ? latestOrder.last_order_date : null;
   }
   async createBatchOrders(order: Order[]): Promise<void> {
-    await this.database.order.createMany({ data: order })
+    const newProducts = await this.database.order.createMany({ data: order })
+    console.log(newProducts)
   }
 }
