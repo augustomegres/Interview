@@ -9,7 +9,8 @@ export class GetOrdersController {
   }
 
   async handle(req: Request, res: Response) {
-    const orders = await this.getOrdersUseCase.execute()
+    const { page } = req.query
+    const orders = await this.getOrdersUseCase.execute({ page: Number(page || 1) })
     return res.json(orders)
   }
 }

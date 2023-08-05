@@ -5,8 +5,8 @@ export class GetOrdersUseCase {
   constructor(ordersRepository: IOrderRepository) {
     this.ordersRepository = ordersRepository
   }
-  async execute() {
-    const order = await this.ordersRepository.findAll()
-    return order
+  async execute({ page }: { page: number }) {
+    const orders = await this.ordersRepository.findAll({ page })
+    return { orders, page }
   }
 }

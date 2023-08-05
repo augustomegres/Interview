@@ -6,9 +6,9 @@ export class GetProductsUseCase {
   constructor(productRepository: IProductsRepository) {
     this.productRepository = productRepository
   }
-  
-  async execute() {
-    const products = await this.productRepository.findAll()
-    return products
+
+  async execute({ page }: { page: number }) {
+    const products = await this.productRepository.findAll({ page })
+    return { products, page }
   }
 }

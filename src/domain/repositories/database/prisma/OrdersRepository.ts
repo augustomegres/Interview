@@ -9,14 +9,25 @@ export class PrismaOrdersRepository implements IOrderRepository {
     this.database = prismaClient
   }
 
-  async findAll(): Promise<Order[]> {
-    const orderList = await this.database.order.findMany({ include: { line_items: true } })
-    const orderArray: Order[] = []
+  async findAll({ page = 1 }: { page: number }): Promise<Order[]> {
+    const orderList = await this.database.order.findMany({
+      include: { line_items: true },
+      where: {
+        line_items: {
+          some: {}
+        }
+      },
+      skip: (page - 1) * 50,
+      take: 50,
+    });
+
+    const orderArray: Order[] = [];
     for (const order of orderList) {
-      orderArray.push(new Order(order))
+      orderArray.push(new Order(order));
     }
-    return orderArray
+    return orderArray;
   }
+
 
   async addFetchOrderHistory(date: Date): Promise<void> {
     await this.database.orderFetchHistory.create({ data: { last_order_date: date } })

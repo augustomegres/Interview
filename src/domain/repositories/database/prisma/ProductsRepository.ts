@@ -8,8 +8,11 @@ export class PrismaProductsRepository implements IProductsRepository {
   constructor(prismaClient: PrismaClient) {
     this.database = prismaClient
   }
-  async findAll(): Promise<Product[]> {
-    const productList = await this.database.product.findMany()
+  async findAll({ page = 1 }: { page: number }): Promise<Product[]> {
+    const productList = await this.database.product.findMany({
+      skip: (page - 1) * 50,
+      take: 50,
+    })
     const productArray: Product[] = []
     for (const product of productList) {
       productArray.push(new Product(product))

@@ -9,7 +9,8 @@ export class GetProductsController {
   }
 
   async handle(req: Request, res: Response) {
-    const products = await this.getProductsUseCase.execute()
+    const { page } = req.query
+    const products = await this.getProductsUseCase.execute({ page: Number(page || 1) })
     return res.json(products)
   }
 }
