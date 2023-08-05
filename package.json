@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start:dev": "npx nodemon",
+    "migrate:dev": "prisma migrate dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
